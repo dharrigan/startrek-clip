@@ -1,0 +1,14 @@
+{:components
+ {:db {:start (startrek.db/connection-pool-start {:dbtype "postgres"
+                                                  :dbname "startrek"
+                                                  :host "postgres"
+                                                  :username "theborg"
+                                                  :password "resistanceisfutile"})
+       :post-start (startrek.migration/migrate (clip/ref :db) ["db/migration/postgresql"])}
+
+  :router {:start (startrek.api/ring-handler)}
+
+  :api {:start (startrek.api/jetty-start (clip/ref :router) {:port 8080})
+        :stop startrek.api/jetty-stop}
+
+  :core {:start (clip/ref :db)}}}
