@@ -32,6 +32,7 @@ publish:docker:clojure:
     - build
   image: docker:latest
   variables:
+    CI_DEBUG_TRACE: "true"
     DOCKER_CONFIG: /root/.docker
     IMAGE: $DOCKER_REGISTRY:8083/$CI_PROJECT_PATH
     JVM_TAG: 11.0.4
