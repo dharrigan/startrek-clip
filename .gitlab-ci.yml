@@ -1,6 +1,6 @@
 ---
 
-image: clojure:openjdk-11
+image: clojure:openjdk-11-tools-deps
 
 stages:
   - build
