@@ -7,7 +7,8 @@ stages:
   - publish
 
 services:
-  - docker:dind
+  - name: docker:dind
+    command: ["--insecure-registry=docker.harrigan.online:8083"]
 
 before_script:
   - "git describe --match='rel/*' --exact-match && export PROJECT_VERSION=$(git describe --match='rel/*' | sed 's:^rel/::') || true"
