@@ -15,9 +15,6 @@ before_script:
 cache:
   key: $CI_PROJECT_NAME
 
-variables:
-  DOCKER_HOST: "tcp://localhost:2375"
-
 build:
   stage: build
   script:
