@@ -38,6 +38,7 @@ publish:docker:clojure:
   before_script:
     - mkdir -p $DOCKER_CONFIG
     - echo "$DOCKER_AUTH_CONFIG" > $DOCKER_CONFIG/config.json
+    - docker info
   script:
     - export TAG=$(echo -en ${CI_COMMIT_REF_NAME#rel/} | tr -c '[:alnum:]_.-' '-')
     - export IMAGE_NAME="$IMAGE:$TAG"
