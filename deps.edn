@@ -20,15 +20,5 @@
         ring/ring-jetty-adapter {:mvn/version "1.7.1"}
         seancorfield/next.jdbc {:mvn/version "1.0.10"}}
 
- :aliases {:native-image
-           {:main-opts ["-m clj.native-image startrek.core"
-                        "-H:Name=startrek"
-                        "--report-unsupported-elements-at-runtime"
-                        "--initialize-at-build-time"
-                        "-H:ResourceConfigurationFiles=scripts/graalvm/resources-config.json"
-                        "--enable-url-protocols=http,https"]
-            :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
-            :extra-deps
-            {clj.native-image
-             {:git/url "https://github.com/taylorwood/clj.native-image.git"
-              :sha "b3823a48be75122b9671c86ce5353a85589ef15f"}}}}}
+ :aliases {:uberjar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
+                     :main-opts ["-m" "hf.depstar.uberjar"]}}}

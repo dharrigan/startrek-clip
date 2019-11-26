@@ -1,0 +1,47 @@
+---
+
+image: clojure:openjdk-11
+
+stages:
+  - build
+  - publish
+
+services:
+  - docker:dind
+
+before_script:
+  - "git describe --match='rel/*' --exact-match && export PROJECT_VERSION=$(git describe --match='rel/*' | sed 's:^rel/::') || true"
+
+cache:
+  key: $CI_PROJECT_NAME
+
+build:
+  stage: build
+  script:
+    - clojure -A:uberjar startrek.jar
+  artifacts:
+    paths:
+      - startrek.jar
+    expire_in: 1 day
+
+publish:docker:clojure:
+  stage: publish
+  dependencies:
+    - build
+  image: docker:latest
+  variables:
+    DOCKER_CONFIG: /root/.docker
+    IMAGE: $DOCKER_REGISTRY/$CI_PROJECT_PATH
+    JVM_TAG: 11.0.4
+  before_script:
+    - mkdir -p $DOCKER_CONFIG
+    - echo "$DOCKER_AUTH_CONFIG" > $DOCKER_CONFIG/config.json
+  script:
+    - export TAG=$(echo -en ${CI_COMMIT_REF_NAME#rel/} | tr -c '[:alnum:]_.-' '-')
+    - export IMAGE_NAME="$IMAGE:$TAG"
+    - docker build --pull -f scripts/docker/Dockerfile -t $IMAGE_NAME --build-arg JVM_TAG=$JVM_TAG .
+    - docker push $IMAGE_NAME
+  only:
+    - /^rel\//
+  tags:
+    - docker
