@@ -8,7 +8,7 @@ stages:
 
 services:
   - name: docker:dind
-    command: ["--insecure-registry=docker.harrigan.online:8083"]
+    #    command: ["--insecure-registry=docker.harrigan.online:8083"]
 
 before_script:
   - "git describe --match='rel/*' --exact-match && export PROJECT_VERSION=$(git describe --match='rel/*' | sed 's:^rel/::') || true"
@@ -34,12 +34,12 @@ publish:docker:clojure:
   image: docker:latest
   variables:
     CI_DEBUG_TRACE: "true"
-    DOCKER_CONFIG: /root/.docker
+    DOCKER_CONFIG: /etc/docker
     IMAGE: $DOCKER_REGISTRY:8083/$CI_PROJECT_PATH
     JVM_TAG: 11.0.4
   before_script:
     - mkdir -p $DOCKER_CONFIG
-    - echo "$DOCKER_AUTH_CONFIG" > $DOCKER_CONFIG/config.json
+    - echo "$DOCKER_AUTH_CONFIG" > $DOCKER_CONFIG/daemon.json
     - docker info
   script:
     - export TAG=$(echo -en ${CI_COMMIT_REF_NAME#rel/} | tr -c '[:alnum:]_.-' '-')
