@@ -33,7 +33,7 @@ publish:docker:clojure:
   image: docker:latest
   variables:
     DOCKER_CONFIG: /root/.docker
-    IMAGE: $DOCKER_REGISTRY/$CI_PROJECT_PATH
+    IMAGE: $DOCKER_REGISTRY:8083/$CI_PROJECT_PATH
     JVM_TAG: 11.0.4
   before_script:
     - mkdir -p $DOCKER_CONFIG
