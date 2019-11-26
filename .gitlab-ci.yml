@@ -23,6 +23,8 @@ build:
     paths:
       - startrek.jar
     expire_in: 1 day
+  tags:
+    - build
 
 publish:docker:clojure:
   stage: publish
@@ -44,4 +46,4 @@ publish:docker:clojure:
   only:
     - /^rel\//
   tags:
-    - docker
+    - publish
