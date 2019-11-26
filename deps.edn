@@ -20,9 +20,8 @@
         ring/ring-jetty-adapter {:mvn/version "1.7.1"}
         seancorfield/next.jdbc {:mvn/version "1.0.10"}}
 
-
  :aliases {:uberjar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
                      :main-opts ["-m" "hf.depstar.uberjar"]}}
 
- :mvn/repos {"central" {:url "http://nexus/repository/maven-public"}
-             "clojars" {:url "http://nexus/repository/clojars"}}}
+ :mvn/repos {"central" {:url "http://nexus/repository/maven-public/"}
+             "clojars" {:url "http://nexus/repository/clojars/"}}}
