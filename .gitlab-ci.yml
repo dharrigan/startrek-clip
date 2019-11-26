@@ -14,8 +14,6 @@ before_script:
 
 cache:
   key: $CI_PROJECT_NAME
-  paths:
-    - .cpcache
 
 variables:
   DOCKER_HOST: "tcp://docker:2375"
