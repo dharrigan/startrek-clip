@@ -3,8 +3,6 @@
    [org.flywaydb.core Flyway]
    [org.flywaydb.core.api.configuration FluentConfiguration]))
 
-(set! *warn-on-reflection* true)
-
 (defn flyway
   [datasource migration-locations]
   (Flyway. (doto

@@ -1,8 +1,0 @@
-{
-  "resources": [
-    {"pattern": "config/config.edn"},
-    {"pattern": "config/.*"},
-    {"pattern": "db/.*"},
-    {"pattern": "logback.xml"}
-  ]
-}

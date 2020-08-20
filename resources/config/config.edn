@@ -1,14 +1,20 @@
+;;
+;; Configuration
+;;
 {:components
- {:db {:start (startrek.db/connection-pool-start {:dbtype "postgres"
-                                                  :dbname "startrek"
-                                                  :host "postgres"
-                                                  :username "theborg"
-                                                  :password "resistanceisfutile"})
-       :post-start (startrek.migration/migrate (clip/ref :db) ["db/migration/postgresql"])}
+ ;; opqaue "$deity" configuration
+ {:app-config {:start {:startrek-db (clip/ref :startrek-db)}}
+                       ;; more things can be added here as the number of services grows, i.e., redis, kafka etc...
 
-  :router {:start (startrek.api/ring-handler)}
+  :startrek-db {:start (startrek.db/connection-pool-start {:dbtype "postgres"
+                                                           :dbname "startrek"
+                                                           :host "postgres"
+                                                           :username "theborg"
+                                                           :password "resistanceisfutile"})
+                :post-start (startrek.migration/migrate this ["db/migration/postgresql"])
+                :stop (startrek.db/connection-pool-stop this)}
+
+  :router {:start (startrek.api/ring-handler (clip/ref :app-config))}
 
   :api {:start (startrek.api/jetty-start (clip/ref :router) {:port 8080})
-        :stop startrek.api/jetty-stop}
-
-  :core {:start (clip/ref :db)}}}
+        :stop startrek.api/jetty-stop}}}

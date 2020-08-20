@@ -9,36 +9,36 @@
   (:import
    [com.zaxxer.hikari HikariDataSource]))
 
-(def datasource (atom nil))
-
 (defn connection-pool-start
   [config]
-  (let [ds (connection/->pool HikariDataSource config)]
-    (reset! datasource ds)
-    @datasource))
+  (connection/->pool HikariDataSource config))
+
+(defn connection-pool-stop
+  [datasource]
+  (.close datasource))
+
+(def find-starships-sql
+  (-> (select :*)
+      (from :starship)
+      sql/format))
 
 (defn find-starships
-  []
-  (try
-   (jdbc/execute! @datasource (-> (select :*)
-                                  (from :starship)
-                                  sql/format)
-                  {:builder-fn as-unqualified-lower-maps})
-   (catch Exception e (log/error e))))
+  [app-config]
+  (let [{:keys [startrek-db]} app-config]
+    (try
+     (jdbc/execute! startrek-db find-starships-sql {:builder-fn as-unqualified-lower-maps})
+     (catch Exception e (log/error e)))))
+
+(defn find-starship-by-id-sql
+  [id]
+  (-> (select :*)
+      (from :starship)
+      (where [:= :id id])
+      sql/format))
 
 (defn find-starship-by-id
-  [id]
-  (try
-   (jdbc/execute-one! @datasource (-> (select :*)
-                                      (from :starship)
-                                      (where [:= :id id])
-                                      sql/format)
-                      {:builder-fn as-unqualified-lower-maps})
-   (catch Exception e (log/error e))))
-
-(comment
-
- (require '[startrek.db :as db])
- (db/find-starships)
-
- #_+)
+  [id app-config]
+  (let [{:keys [startrek-db]} app-config]
+    (try
+     (jdbc/execute-one! startrek-db (find-starship-by-id-sql id) {:builder-fn as-unqualified-lower-maps})
+     (catch Exception e (log/error e)))))

@@ -21,30 +21,33 @@
 
 (defn jetty-stop
   [^Server server]
-  (.stop server) ;; stop is async
-  (.join server)) ;; so let's make sure it's really stopped!
+  (.stop server) ; stop is async
+  (.join server)) ; so let's make sure it's really stopped!
 
 (defn get-starships
-  [_]
-  (if-let [results (seq (db/find-starships))]
-    {:headers {"Access-Control-Allow-Origin" "*"}
-     :status OK
-     :body results}
-    {:status NOT-FOUND}))
+  [app-config]
+  (fn [_] ; return a function that takes the "request" as the input, although we don't do anything with it.
+    (if-let [results (seq (db/find-starships app-config))]
+      {:headers {"Access-Control-Allow-Origin" "*"}
+       :status OK
+       :body results}
+      {:status NOT-FOUND})))
 
 (defn get-starship-by-id
-  [{{{:keys [id]} :path} :parameters}]
-  (if-let [results (db/find-starship-by-id id)]
-    {:headers {"Access-Control-Allow-Origin" "*"}
-     :status OK :body results}
-    {:status NOT-FOUND}))
+  [app-config]
+  (fn [{{{:keys [id]} :path} :parameters}] ; return a function that will take the "request" as the input
+    (if-let [results (db/find-starship-by-id id app-config)]
+      {:headers {"Access-Control-Allow-Origin" "*"}
+       :status OK :body results}
+      {:status NOT-FOUND})))
 
-(def router
+(defn router
+  [app-config]
   (ring/router
    ["/api"
     ["/ping" {:get (fn [_] {:status 200 :body "Pong!"})}]
-    ["/starships" get-starships]
-    ["/starships/:id" {:get get-starship-by-id
+    ["/starships" (get-starships app-config)]
+    ["/starships/:id" {:get (get-starship-by-id app-config)
                        :parameters {:path {:id s/Int}}}]]
    {:data {:coercion rcs/coercion
            :muuntaja m/instance
@@ -54,5 +57,5 @@
                         coercion/coerce-response-middleware]}}))
 
 (defn ring-handler
-  []
-  (ring/ring-handler router))
+  [app-config]
+  (ring/ring-handler (router app-config)))
