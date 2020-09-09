@@ -42,3 +42,11 @@
     (try
      (jdbc/execute-one! startrek-db (find-starship-by-id-sql id) {:builder-fn as-unqualified-lower-maps})
      (catch Exception e (log/error e)))))
+
+(comment
+
+ (require '[startrek.db :as db])
+
+ (db/find-starships app-config)
+
+ #_+)

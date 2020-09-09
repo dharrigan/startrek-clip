@@ -51,4 +51,6 @@
  ;; paste into the repl to get this show started!
  (start)
 
+ (def app-config (:app-config system))
+
  #_+)
