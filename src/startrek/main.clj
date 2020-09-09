@@ -40,6 +40,7 @@
 (comment
 
  ;; paste into the repl
+
  (require
   '[startrek.main :as main]
   '[juxt.clip.repl :refer [start stop set-init! system]])
@@ -49,6 +50,7 @@
  (set-init! #(main/config {:profile profile :filename filename}))
 
  ;; paste into the repl to get this show started!
+
  (start)
 
  (def app-config (:app-config system))
