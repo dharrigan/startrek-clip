@@ -1,0 +1,68 @@
+= Star Trek Clojure/script Project
+:author: David Harrigan
+:email: dharrigan@gmail.com
+:docinfo: true
+:doctype: book
+:icons: font
+:numbered:
+:sectlinks:
+:sectnums:
+:setanchors:
+:source-highlighter: highlightjs
+:toc:
+:toclevels: 5
+
+== Introduction
+
+This is a very small example project to show how a
+https://clojurescript.org/[ClojureScript] frontend can talk to a
+https://www.clojure.org[Clojure] backend. The project(s) are as follows:
+
+=== Star Trek Backend (this https://git.sr.ht/~dharrigan/startrek/tree[repo])
+
+The backend is written in Clojure and uses a PostgreSQL database to store a
+list of spaceships. It uses various technologies, such as
+https://flywaydb.org/[Flyway] for database migrations,
+https://github.com/seancorfield/next-jdbc[next.jdbc] and
+https://github.com/seancorfield/honeysql[honeysql] for database queries,
+https://github.com/juxt/aero[aero] and https://github.com/juxt/clip[clip] for
+system "state" management and configuration. A full list of the technologies
+used can be found in the `deps.edn` file.
+
+=== Star Trek UI (accompanying https://git.sr.ht/~dharrigan/startrek-ui/tree[repo])
+
+This is the UI aspect. It's written in ClojureScript, using
+https://reagent-project.github.io/[reagent] and
+https://github.com/Day8/re-frame[reframe], with a nice little display library
+that wraps https://ant.design/[antd]. It simply shows a list of spaceships
+that are fetched from the backend. A full list of the technologies used can be
+found in the `deps.edn` file.
+
+=== Engage!
+
+Information on how to launch this project can be found in the accompanying
+`startrek-ui` project. Please refer to the `README.adoc` found there :-)
+
+== License
+
+Find the full https://unlicense.org/[unlicense] in the `UNLICENSE` (and
+`LICENSE`) file, but here's a snippet:
+
+```
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+```
+
+== Feedback
+
+I welcome feedback. I can usually be found hanging out in the `#clojure-uk`
+channel on https://clojurians.slack.com[Clojurians] Slack. You can also email
+me if you wish :-)
+
+== Finally!
+
+*Live Long and Prosper!*
