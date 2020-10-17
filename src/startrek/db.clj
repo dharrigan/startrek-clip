@@ -17,19 +17,18 @@
   [datasource]
   (.close datasource))
 
-(def find-starships-sql
+(def ^:private find-starships-sql
   (-> (select :*)
       (from :starship)
       sql/format))
 
 (defn find-starships
-  [app-config]
-  (let [{:keys [startrek-db]} app-config]
-    (try
-     (jdbc/execute! startrek-db find-starships-sql {:builder-fn as-unqualified-lower-maps})
-     (catch Exception e (log/error e)))))
+  [{:keys [startrek-db] :as app-config}]
+  (try
+    (jdbc/execute! startrek-db find-starships-sql {:builder-fn as-unqualified-lower-maps})
+    (catch Exception e (log/error e))))
 
-(defn find-starship-by-id-sql
+(defn ^:private find-starship-by-id-sql
   [id]
   (-> (select :*)
       (from :starship)
@@ -37,11 +36,10 @@
       sql/format))
 
 (defn find-starship-by-id
-  [id app-config]
-  (let [{:keys [startrek-db]} app-config]
-    (try
-     (jdbc/execute-one! startrek-db (find-starship-by-id-sql id) {:builder-fn as-unqualified-lower-maps})
-     (catch Exception e (log/error e)))))
+  [id {:keys [startrek-db] :as app-config}]
+  (try
+   (jdbc/execute-one! startrek-db (find-starship-by-id-sql id) {:builder-fn as-unqualified-lower-maps})
+   (catch Exception e (log/error e))))
 
 (comment
 
@@ -49,4 +47,4 @@
 
  (db/find-starships app-config)
 
- #_+)
+ ,)

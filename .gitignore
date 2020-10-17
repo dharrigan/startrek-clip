@@ -21,4 +21,4 @@ tags.lock
 tags.temp
 resources/config/config-*.edn
 config-*.edn
-.clj-kondo
+.clj-kondo/cache

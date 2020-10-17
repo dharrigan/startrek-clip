@@ -3,6 +3,8 @@
 
   <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 
+  <contextName>startrek</contextName>
+
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <Pattern>[%boldWhite(%d)] --- [%boldBlue(%-5level)][%boldGreen(%-25.25logger{25})] - %msg%n%rEx</Pattern>
