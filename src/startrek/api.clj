@@ -27,16 +27,14 @@
   [app-config]
   (fn [_] ; return a function that takes the "request" as the input, although we don't do anything with it.
     (if-let [results (seq (db/find-starships app-config))]
-      {:headers {"Access-Control-Allow-Origin" "*"}
-       :status 200 :body results}
+      {:headers {"Access-Control-Allow-Origin" "*"} :status 200 :body results}
       {:status 404})))
 
 (defn ^:private get-starship-by-id
   [app-config]
   (fn [{{{:keys [id]} :path} :parameters}] ; return a function that will take the "request" as the input
     (if-let [results (db/find-starship-by-id id app-config)]
-      {:headers {"Access-Control-Allow-Origin" "*"}
-       :status 200 :body results}
+      {:headers {"Access-Control-Allow-Origin" "*"} :status 200 :body results}
       {:status 404})))
 
 (defn ^:private router
