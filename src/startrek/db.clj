@@ -4,8 +4,7 @@
    [honeysql.core :as sql]
    [honeysql.helpers :as helpers :refer [select from where]]
    [next.jdbc :as jdbc]
-   [next.jdbc.connection :as connection]
-   [next.jdbc.result-set :refer [as-unqualified-lower-maps]])
+   [next.jdbc.connection :as connection])
   (:import
    [com.zaxxer.hikari HikariDataSource]))
 
@@ -17,6 +16,10 @@
   [datasource]
   (.close datasource))
 
+(defn ^:private remove-namespace-from-column
+  [m]
+  (into {} (map (fn [[k v]] [(keyword (name k)) v])) m))
+
 (def ^:private find-starships-sql
   (-> (select :*)
       (from :starship)
@@ -25,8 +28,15 @@
 (defn find-starships
   [{:keys [startrek-db] :as app-config}]
   (try
-    (jdbc/execute! startrek-db find-starships-sql {:builder-fn as-unqualified-lower-maps})
-    (catch Exception e (log/error e))))
+   (->> (jdbc/execute! startrek-db find-starships-sql)
+        ;; you could do whatever you want with the results here
+        ;; but keeping them as namespaced keywords is a good
+        ;; and recommended approach, avoids clashes (if you are
+        ;; joining multiple tables etc.,). In this simple example
+        ;; since I'm not doing anything special, I'll just
+        ;; remove the namespace and return as-is.
+        (map remove-namespace-from-column))
+   (catch Exception e (log/error e))))
 
 (defn ^:private find-starship-by-id-sql
   [id]
@@ -38,7 +48,9 @@
 (defn find-starship-by-id
   [id {:keys [startrek-db] :as app-config}]
   (try
-   (jdbc/execute-one! startrek-db (find-starship-by-id-sql id) {:builder-fn as-unqualified-lower-maps})
+   (-> (jdbc/execute-one! startrek-db (find-starship-by-id-sql id))
+       ;; see comment above for why I remove the namespace.
+       (remove-namespace-from-column))
    (catch Exception e (log/error e))))
 
 (comment

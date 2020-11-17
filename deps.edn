@@ -4,7 +4,7 @@
         aero/aero {:mvn/version "1.1.6"}
         ch.qos.logback/logback-classic {:mvn/version "1.2.3" :exclusions [org.slf4j/slf4j-api]}
         cheshire/cheshire {:mvn/version "5.10.0"}
-        clj-http/clj-http {:mvn/version "3.10.3"}
+        clj-http/clj-http {:mvn/version "3.11.0"}
         com.zaxxer/HikariCP {:mvn/version "3.4.5"}
         honeysql/honeysql {:mvn/version "1.0.444"}
         juxt/clip {:mvn/version "0.20.0"}
@@ -28,6 +28,6 @@
                                        expectations/clojure-test {:mvn/version "1.2.1"}}
                          :main-opts ["-m" "kaocha.runner" "--reporter" "kaocha.report/documentation"]}
 
-           :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "1.1.133"}
+           :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "1.1.136"}
                                   org.clojure/tools.deps.alpha {:mvn/version "0.9.833"}}
                      :main-opts ["-m" "hf.depstar.uberjar" "startrek.jar" "-C" "-m" "startrek.main"]}}}
