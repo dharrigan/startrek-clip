@@ -1,7 +1,7 @@
 #
 # Clojure Application Dockerfile
 #
-ARG JVM_TAG=openjdk-11-tools-deps-slim-buster
+ARG JVM_TAG=openjdk-16-tools-deps-slim-buster
 #
 FROM clojure:${JVM_TAG}
 
@@ -16,20 +16,39 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+#
+# Add in the Prometheus JMX Exporter for remote monitoring/diagnostics
+#
+ARG JMX_EXPORTER_VERSION=0.15.0
+#
+RUN wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$JMX_EXPORTER_VERSION/jmx_prometheus_javaagent-$JMX_EXPORTER_VERSION.jar -O /tmp/jmx_prometheus_javaagent.jar
+
 # HTTP
 EXPOSE 8080
 
+# JMX EXPORTER
+EXPOSE 9080
+
+# JMX
+EXPOSE 9010
+
 # Call health status against the health endpoint
-HEALTHCHECK --start-period=240s CMD curl -sS --fail http://localhost:8080/api/ping || exit 1
+HEALTHCHECK --start-period=240s CMD curl -sS --fail http://localhost:8080/ping || exit 1
 
 # Options that are passed to the JVM when it is launched
 ENV JVM_OPTS ""
+
+# JMX port
+ENV JMX_PORT 9010
+
+# JMX EXPORTER port
+ENV JMX_EXPORTER_PORT 9080
 
 # Options that are passed to the APP when it is launched
 ENV RUN_OPTS ""
 
 # JAR name (as named during the uberjar task)
-ARG APPLICATION_JAR="startrek.jar"
+ARG APPLICATION_JAR="app.jar"
 
 # Export the name so that the launch script can pick it up
 ENV APPLICATION_JAR $APPLICATION_JAR
@@ -50,6 +69,9 @@ COPY --chown=clojure:clojure scripts/docker/launch.sh launch.sh
 
 # Copy the Uberjar into place
 COPY --chown=clojure:clojure $APPLICATION_JAR $APPLICATION_JAR
+
+# Copy the Prometheus JMX Exporter config into place
+COPY --chown=clojure:clojure scripts/docker/jmxexporter/config.yml config.yml
 
 # And awaayyy we go!
 ENTRYPOINT ["sh", "./launch.sh"]

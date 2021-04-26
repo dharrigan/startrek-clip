@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+bin/build
+docker-compose -f scripts/docker/docker-compose-${1:-local}.yml up --remove-orphans

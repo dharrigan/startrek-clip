@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Don't forget to rename "config/config-example.edn" to "config/config-local.edn" and change the values to suit your setup.
+bin/build
+java -cp resources/config:app.jar startrek.main --config config-local.edn

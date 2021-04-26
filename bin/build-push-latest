@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+bin/build
+docker build --pull -t docker.harrigan.online/clojure/startrek:latest -f scripts/docker/Dockerfile .
+docker push docker.harrigan.online/clojure/startrek:latest

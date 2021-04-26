@@ -1,17 +1,21 @@
 ---
 
-version: "3.7"
+version: "3.8"
 services:
 
   startrek:
     image: startrek:latest
     ports:
-      - "8080:8080"
+      - "8080:8080"    # HTTP
+      - "18181:9080"   # Prometheus JMX Exporter
+      - "15555:5555"   # JMXMP
+    environment:
+      RUN_OPTS: "--config config/config-example.edn" # use the example configuration, as it's configured to assume defaults
     depends_on:
       - postgres
 
   postgres:
-    image: postgres
+    image: postgres:latest
     ports:
       - 5432:5432
     environment:

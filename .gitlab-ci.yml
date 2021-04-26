@@ -1,46 +1,74 @@
 ---
 
-image: clojure:openjdk-11-tools-deps
+image: clojure:openjdk-16-tools-deps-slim-buster
+
+# Due to a GitLab bug we need to extend the cache for each job
+# rather than rely on a top level cache with a per job policy.
+# https://gitlab.com/gitlab-org/gitlab-runner/issues/2838
+
+.cache:
+  cache:
+    key: "${CI_COMMIT_REF_NAME}"
+    paths:
+      - .cpcache/
+      - /root/.m2/
+    policy: pull-push
 
 stages:
-  - build
+  - test
+  - package
   - publish
 
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+
 services:
-  - name: docker:dind
-    command: ["--insecure-registry=docker.harrigan.online:8083", "--registry-mirror=https://docker.harrigan.online"]
+  - docker:19.03.12-dind
 
-before_script:
-  - "git describe --match='rel/*' --exact-match && export PROJECT_VERSION=$(git describe --match='rel/*' | sed 's:^rel/::') || true"
-
-cache:
-  key: $CI_PROJECT_NAME
-
-build:
-  stage: build
+test:
+  extends: .cache
+  stage: test
   script:
-    - clojure -A:uberjar startrek.jar
+    - clojure -Sdeps "${DEPS}" -M:test -m kaocha.runner
+  cache:
+    policy: pull
+
+package:
+  extends: .cache
+  stage: package
+  script:
+    - clojure -X:uberjar
+  cache:
+    policy: pull
   artifacts:
     paths:
-      - startrek.jar
+      - app.jar
     expire_in: 1 day
-  tags:
-    - build
 
-publish:docker:clojure:
+publish:
+  extends: .cache
   stage: publish
   dependencies:
-    - build
+    - package
   image: docker:latest
   variables:
-    IMAGE: $DOCKER_REGISTRY:8083/$CI_PROJECT_PATH
-    JVM_TAG: 11.0.4
-  script:
+    DOCKER_CONFIG: /root/.docker
+    IMAGE: $DOCKER_REGISTRY/$CI_PROJECT_PATH
+    JVM_TAG: openjdk-16-tools-deps-slim-buster
+    JMX_EXPORTER_VERSION: 0.15.0
+  before_script:
+    - mkdir -p $DOCKER_CONFIG
+    - echo "$DOCKER_AUTH_CONFIG" > $DOCKER_CONFIG/config.json
     - export TAG=$(echo -en ${CI_COMMIT_REF_NAME#rel/} | tr -c '[:alnum:]_.-' '-')
-    - export IMAGE_NAME="$IMAGE:$TAG"
-    - docker build --pull -f scripts/docker/Dockerfile -t $IMAGE_NAME --build-arg JVM_TAG=$JVM_TAG .
-    - docker push $IMAGE_NAME
+  script:
+    - docker build --pull --cache-from $IMAGE:latest --tag "$IMAGE:$TAG" --tag "$IMAGE:latest" --build-arg JVM_TAG=$JVM_TAG --build-arg JMX_EXPORTER_VERSION=$JMX_EXPORTER_VERSION -f scripts/docker/Dockerfile .
+    - docker push "$IMAGE:$TAG"
+    - docker push "$IMAGE:latest"
+  cache:
+    policy: pull
   only:
     - /^rel\//
+  except:
+    - branches
   tags:
-    - publish
+    - docker

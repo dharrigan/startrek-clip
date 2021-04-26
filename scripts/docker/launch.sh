@@ -9,11 +9,17 @@
 # It has been introduced to allow the JVM to better manage memory when running within a container.
 
 exec java \
-    -noverify \
+    -Dcom.sun.management.jmxremote.local.only=false \
+    -Dcom.sun.management.jmxremote.port=$JMX_PORT \
+    -Dcom.sun.management.jmxremote.rmi.port=$JMX_PORT \
+    -Dcom.sun.management.jmxremote.host=0.0.0.0 \
+    -Dcom.sun.management.jmxremote.ssl=false \
+    -Dcom.sun.management.jmxremote.authenticate=false \
     -Djava.security.egd=file:/dev/./urandom \
-    -XX:+UnlockExperimentalVMOptions \
-    -XX:MaxRAMPercentage=80.0 \
+    -Djava.rmi.server.hostname=0.0.0.0 \
+    -XX:+UseZGC \
     -XX:TieredStopAtLevel=1 \
+    -javaagent:jmx_prometheus_javaagent.jar=$JMX_EXPORTER_PORT:config.yml \
     $JVM_OPTS \
     -jar $APPLICATION_JAR \
     $RUN_OPTS

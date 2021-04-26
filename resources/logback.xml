@@ -5,15 +5,20 @@
 
   <contextName>startrek</contextName>
 
+  <variable name="STARTREK_LOG_LEVEL" value="${STARTREK_LOG_LEVEL:-debug}" />
+  <variable name="ROOT_LOG_LEVEL" value="${ROOT_LOG_LEVEL:-info}" />
+  <variable name="HIKARI_LOG_LEVEL" value="${HIKARI_LOG_LEVEL:-info}" />
+
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <Pattern>[%boldWhite(%d)] --- [%boldBlue(%-5level)][%boldGreen(%-25.25logger{25})] - %msg%n%rEx</Pattern>
     </encoder>
   </appender>
 
-  <logger name="startrek" level="INFO"/>
+  <logger name="startrek" level="${STARTREK_LOG_LEVEL}"/>
+  <logger name="com.zaxxer.hikari" level="${HIKARI_LOG_LEVEL}"/>
 
-  <root level="info">
+  <root level="${ROOT_LOG_LEVEL}">
     <appender-ref ref="CONSOLE"/>
   </root>
 

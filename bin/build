@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-clojure -Spom
-clojure -M:uberjar
-chmod +r startrek.jar
+clojure -X:uberjar
+chmod +r app.jar
 docker build -f scripts/docker/Dockerfile -t startrek .
 rm -f pom.xml

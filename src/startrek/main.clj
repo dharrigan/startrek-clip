@@ -1,17 +1,13 @@
 (ns startrek.main
+  {:author ["David Harrigan"]}
   (:require
    [aero.core :refer [read-config]]
    [clojure.java.io :as io]
    [clojure.tools.cli :refer [parse-opts]]
-   [clojure.tools.logging :as log]
    [juxt.clip.core :as clip])
   (:gen-class))
 
-(Thread/setDefaultUncaughtExceptionHandler
- (reify Thread$UncaughtExceptionHandler
-   (uncaughtException [_ thread ex]
-     (log/errorf "Uncaught exception on [%s]." (.getName thread))
-     (log/errorf ex))))
+(set! *warn-on-reflection* true)
 
 (defn ^:private load-config
   [opts]
@@ -40,15 +36,19 @@
 
  ;; paste into the repl
 
- (require
-  '[startrek.main :as main]
-  '[juxt.clip.repl :refer [start stop set-init! system]])
- (def profile :default)
- (def config (str "config/config" (when-not (= :default profile) (str "-" (name profile))) ".edn"))
- (def system-config (#'main/load-config {:config config :profile profile}))
- (set-init! (constantly system-config))
- (start)
+ (do
+  (require
+   '[startrek.main :as main]
+   '[juxt.clip.repl :refer [start stop set-init! system]])
+  (def profile :local) ;; rename "config/config-example.edn" to "config/config-local.edn" and change values to suit your setup.
+  (def config (str "config/config" (when-not (= :default profile) (str "-" (name profile))) ".edn"))
+  (def system-config (#'main/load-config {:config config :profile profile}))
+  (set-init! (constantly system-config))
+  (start)
+  (def app-config (:app-config system))
+  (intern (find-ns 'startrek.main) 'app-config app-config)) ; shove the value of app-config into this namespace
 
- (def app-config (:app-config system))
+ (stop)
+ (start)
 
  #_+)

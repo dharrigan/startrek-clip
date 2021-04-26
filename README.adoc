@@ -14,34 +14,71 @@
 
 == Introduction
 
-This is a very small example project to show how a
-https://clojurescript.org/[ClojureScript] frontend can talk to a
-https://www.clojure.org[Clojure] backend. The project(s) are as follows:
+This is a very small, yet surprisingly complete, example of using
+Clojure to serve up a RESTful API. It uses a variety of technologies
+to demonstrate how this is possible. The project offers a full CRUD
+(Create, Read, Update and Delete) experience over some Star Trek
+starships!
 
-=== Star Trek Backend (this https://git.sr.ht/~dharrigan/startrek/tree[repo])
+== Features
 
-The backend is written in Clojure and uses a PostgreSQL database to store a
-list of spaceships. It uses various technologies, such as
-https://flywaydb.org/[Flyway] for database migrations,
-https://github.com/seancorfield/next-jdbc[next.jdbc] and
-https://github.com/seancorfield/honeysql[honeysql] for database queries,
-https://github.com/juxt/aero[aero] and https://github.com/juxt/clip[clip] for
-system "state" management and configuration. A full list of the technologies
-used can be found in the `deps.edn` file.
+* CRUD Functionality
+* Exception Handling
+* Internationalisation (i18n)
+* Swagger API
+* Input Validation (using https://github.com/metosin/malli[Malli])
 
-=== Star Trek UI (accompanying https://git.sr.ht/~dharrigan/startrek-ui/tree[repo])
+=== Star Trek
 
-This is the UI aspect. It's written in ClojureScript, using
-https://reagent-project.github.io/[reagent] and
-https://github.com/Day8/re-frame[reframe], with a nice little display library
-that wraps https://ant.design/[antd]. It simply shows a list of spaceships
-that are fetched from the backend. A full list of the technologies used can be
-found in the `deps.edn` file.
+This backend is written in Clojure and uses a PostgreSQL database to
+store a list of starships. The technologies in play include:
+
+* https://github.com/metosin/reitit[reitit]
+* https://github.com/seancorfield/next-jdbc[next-jdbc]
+* https://github.com/seancorfield/honeysql[honeysql (v2)]
+* https://github.com/juxt/clip[juxt clip]
+* https://github.com/juxt/aero[juxt aero]
+* https://github.com/flyway/flyway[flyway database migration]
+
+A full list of the technologies that are used can be found in the
+`deps.edn` file.
+
+This service also exposes
+https://prometheus.io/docs/introduction/overview/[Prometheus] metrics
+*AND* a JMX endpoint for your enjoyment!
 
 === Engage!
 
-Information on how to launch this project can be found in the accompanying
-`startrek-ui` project. Please refer to the `README.adoc` found there :-)
+There are at least 3 ways to launch this project:
+
+
+==== Option 1
+
+IMPORTANT: You need to copy the `resources/config/config-example.edn`
+to `resources/config/config-local.edn` and modify, for example, if you
+are connecting to your own PostgreSQL instance.
+
+Fire up a *REPL* and connect to it. Open up the `main.clj` file in
+your editor and evaluate the `(do ,,,)` block contained within the
+`(comment ,,,)` rich comment block.
+
+==== Option 2
+
+IMPORTANT: You need to copy the `resources/config/config-example.edn`
+to `resources/config/config-local.edn` and modify, for example, if you
+are connecting to your own PostgreSQL instance.
+
+* `bin/build`
+* `bin/run-local`
+
+==== Option 3
+
+IMPORTANT: You don't need to copy any config file, as the docker
+container is configured to use `config/config-example.edn`, and thus
+this is the one by the application.
+
+* `bin/build`
+* `bin/run-docker`
 
 == License
 
