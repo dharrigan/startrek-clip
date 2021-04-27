@@ -19,19 +19,19 @@
         org.clojure/clojure {:mvn/version "1.10.3"}
         org.clojure/tools.cli {:mvn/version "1.0.206"}
         org.clojure/tools.logging {:mvn/version "1.1.0"}
-        org.flywaydb/flyway-core {:mvn/version "7.8.1"}
+        org.flywaydb/flyway-core {:mvn/version "7.8.2"}
         org.glassfish.external/opendmk_jmxremote_optional_jar {:mvn/version "1.0-b01-ea"}
         org.postgresql/postgresql {:mvn/version "42.2.20"}
         org.slf4j/jcl-over-slf4j {:mvn/version "1.7.30"}
         org.slf4j/jul-to-slf4j {:mvn/version "1.7.30"}
         org.slf4j/log4j-over-slf4j {:mvn/version "1.7.30"}
         org.slf4j/slf4j-api {:mvn/version "1.7.30"}
-        ring/ring-jetty-adapter {:mvn/version "1.9.2"}}
+        ring/ring-jetty-adapter {:mvn/version "1.9.3"}}
 
  :aliases {:test {:extra-paths ["test" "test/resources"]
                   :extra-deps  {expectations/clojure-test {:mvn/version "1.2.1"}
                                 com.github.tomakehurst/wiremock-jre8 {:mvn/version "2.27.2"}
-                                kelveden/clj-wiremock {:mvn/version "1.6.0"
+                                kelveden/clj-wiremock {:mvn/version "1.7.0"
                                                        :exclusions [org.eclipse.jetty/jetty-servlet
                                                                     org.eclipse.jetty/jetty-servlets
                                                                     org.eclipse.jetty/jetty-webapp]}
