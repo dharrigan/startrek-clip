@@ -1,8 +1,6 @@
 (ns startrek.base.api.router
   {:author ["David Harrigan"]}
   (:require
-   [camel-snake-kebab.core :as csk]
-   [camel-snake-kebab.extras :as cske]
    [muuntaja.core :as m]
    [reitit.coercion.malli :as rcm]
    [reitit.ring :as ring]
@@ -13,6 +11,7 @@
    [reitit.swagger :as swagger]
    [reitit.swagger-ui :as swagger-ui]
    [ring.adapter.jetty :as jetty]
+   [ring.middleware.cors :refer [wrap-cors]]
    [startrek.base.api.general.actuator :as actuator-api]
    [startrek.base.api.general.favicon :as favicon-api]
    [startrek.base.api.general.health :as health-api]
@@ -25,17 +24,10 @@
 
 (set! *warn-on-reflection* true)
 
-(def ^:private ->camelCase
-  {:name ::camelCase
-   :wrap (fn [handler]
-           (fn [request]
-             (cske/transform-keys csk/->camelCase (handler request))))})
-
 (defn ^:private router
   [app-config]
   (ring/router
-   [(merge ["/api" {:middleware [[metrics/prometheus]
-                                 [->camelCase]]}]
+   [(merge ["/api" {:middleware [[metrics/prometheus]]}]
            (starship-api/routes app-config))
     (actuator-api/routes app-config)
     swagger-api/routes
@@ -47,6 +39,8 @@
            :middleware [swagger/swagger-feature
                         muuntaja/format-middleware
                         (exceptions/exception-middleware)
+                        [wrap-cors :access-control-allow-origin [#".*"]
+                                   :access-control-allow-methods [:get :put :post :patch :delete]]
                         parameters/parameters-middleware
                         coercion/coerce-exceptions-middleware
                         coercion/coerce-request-middleware
