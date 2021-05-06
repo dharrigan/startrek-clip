@@ -51,7 +51,6 @@ https://prometheus.io/docs/introduction/overview/[Prometheus] metrics
 
 There are at least 3 ways to launch this project:
 
-
 ==== Option 1
 
 IMPORTANT: You need to copy the `resources/config/config-example.edn`
