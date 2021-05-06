@@ -11,8 +11,8 @@
 (defn ^:private database-health-check
   [app-config]
   (if (db/health-check app-config)
-    {:db {:status "UP"} :starships {:status "There's Klingons on the starboard bow, starboard bow Jim!"}}
-    {:db {:status "DOWN"}}))
+    {:db [{:status "UP"}] :starships {:status "There's Klingons on the starboard bow, starboard bow Jim!"}}
+    {:db [{:status "DOWN"}]}))
 
 (defn ^:private health-check
   [app-config]
