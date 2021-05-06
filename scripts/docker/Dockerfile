@@ -24,7 +24,7 @@ ARG JMX_EXPORTER_VERSION=0.15.0
 RUN wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$JMX_EXPORTER_VERSION/jmx_prometheus_javaagent-$JMX_EXPORTER_VERSION.jar -O /tmp/jmx_prometheus_javaagent.jar
 
 # HTTP
-EXPOSE 8080
+EXPOSE 9053
 
 # JMX EXPORTER
 EXPOSE 9080
@@ -33,7 +33,7 @@ EXPOSE 9080
 EXPOSE 9010
 
 # Call health status against the health endpoint
-HEALTHCHECK --start-period=240s CMD curl -sS --fail http://localhost:8080/ping || exit 1
+HEALTHCHECK --start-period=240s CMD curl -sS --fail http://localhost:9053/ping || exit 1
 
 # Options that are passed to the JVM when it is launched
 ENV JVM_OPTS ""

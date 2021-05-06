@@ -24,5 +24,5 @@
                 :post-start (startrek.components.database.impl/post-start this ["db/migration/postgresql"])
                 :stop (startrek.components.database.impl/stop this)}
 
-  :router {:start (startrek.base.api.router/start (clip/ref :app-config) {:port #profile {:default #or [#env PORT 8080]}})
+  :router {:start (startrek.base.api.router/start (clip/ref :app-config) {:port #profile {:default #or [#env PORT 9053]}})
            :stop (startrek.base.api.router/stop this)}}}

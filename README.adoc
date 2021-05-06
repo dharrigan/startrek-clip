@@ -47,6 +47,14 @@ This service also exposes
 https://prometheus.io/docs/introduction/overview/[Prometheus] metrics
 *AND* a JMX endpoint for your enjoyment!
 
+=== Star Trek UI
+
+A companion project is available on
+https://github.com/dharrigan/startrek-ui[github] that exposes a UI
+written in https://clojurescript.org/[ClojureScript]. It's highly
+recommended that you look at that project too and see if you can get
+them both working together! 😀
+
 === Engage!
 
 There are at least 3 ways to launch this project:
