@@ -1,0 +1,33 @@
+;;
+;; Configuration
+;;
+{:secrets {:startrek-db {:dbtype "postgres"
+                         :dbname "startrek"
+                         :host "postgres"
+                         :port 5432
+                         :username "theborg"
+                         :password "resistanceisfutile"}}
+
+ :runtime-config {:jmxmp {:port 15555}}
+
+ :components
+ ;; opqaue "$deity" configuration
+ {:app-config {:start {:runtime-config #ref [:runtime-config]
+                       :secrets #ref [:secrets]
+                       :startrek-db (clip/ref :startrek-db)}}
+
+  :jmxmp {:start (startrek.components.jmxmp.impl/start #ref [:runtime-config :jmxmp :port])
+          :stop (startrek.components.jmxmp.impl/stop this)}
+
+  :startrek-db {:start (startrek.components.database.impl/start {:dbtype #ref [:secrets :startrek-db :dbtype]
+                                                                 :host #ref [:secrets :startrek-db :host]
+                                                                 :port #ref [:secrets :startrek-db :port]
+                                                                 :dbname #ref [:secrets :startrek-db :dbname]
+                                                                 :username #ref [:secrets :startrek-db :username]
+                                                                 :password #ref [:secrets :startrek-db :password]
+                                                                 :poolName #ref [:secrets :startrek-db :dbname]})
+                :post-start (startrek.components.database.impl/post-start this ["db/migration/postgresql"])
+                :stop (startrek.components.database.impl/stop this)}
+
+  :router {:start (startrek.base.api.router/start (clip/ref :app-config) {:port #profile {:default #or [#env PORT 9503]}})
+           :stop (startrek.base.api.router/stop this)}}}

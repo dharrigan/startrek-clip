@@ -19,7 +19,5 @@ config/local
 local
 tags.lock
 tags.temp
-resources/config/config-*.edn
-!resources/config/config-example.edn
-config-*.edn
 .clj-kondo/cache
+resources/config/config-local.edn
