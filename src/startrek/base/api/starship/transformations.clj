@@ -1,14 +1,10 @@
 (ns startrek.base.api.starship.transformations
   {:author "David Harrigan"}
   (:require
-   [clojure.set :as s]
-   [com.rpl.specter :refer [declarepath providepath if-path compact setval MAP-VALS NONE STAY]]))
+   [clojure.set :as s]))
 
 (set! *warn-on-reflection* true)
 
-(declare DEEP-MAP-VALS)
-(declarepath DEEP-MAP-VALS)
-(providepath DEEP-MAP-VALS (if-path map? [(compact MAP-VALS) DEEP-MAP-VALS] STAY))
 
 (def transform-starships
   (comp
@@ -20,8 +16,7 @@
                            :starship/launched :launched
                            :starship/registry :registry
                            :starship/uuid :id}))
-   (map #(dissoc % :starship/starship_id))
-   (map #(setval [DEEP-MAP-VALS nil?] NONE %))))
+   (map #(dissoc % :starship/starship_id))))
 
 (defn create
   [uuid]

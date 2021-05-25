@@ -1,13 +1,7 @@
 (ns startrek.base.api.starship.mapper
-  {:author ["David Harrigan"]}
-  (:require
-   [com.rpl.specter :refer [declarepath providepath if-path compact setval MAP-VALS NONE STAY]]))
+  {:author ["David Harrigan"]})
 
 (set! *warn-on-reflection* true)
-
-(declare DEEP-MAP-VALS)
-(declarepath DEEP-MAP-VALS)
-(providepath DEEP-MAP-VALS (if-path map? [(compact MAP-VALS) DEEP-MAP-VALS] STAY))
 
 (defn request->create
   [request]
@@ -40,7 +34,7 @@
                   :class class
                   :registry registry
                   :image image}]
-    (setval [DEEP-MAP-VALS nil?] NONE starship)))
+    starship))
 
 (defn request->search
   [request]
@@ -52,4 +46,4 @@
                   :class class
                   :registry registry
                   :image image}]
-    (setval [DEEP-MAP-VALS nil?] NONE starship)))
+    starship))

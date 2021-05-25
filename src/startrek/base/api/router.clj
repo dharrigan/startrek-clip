@@ -1,6 +1,7 @@
 (ns startrek.base.api.router
   {:author ["David Harrigan"]}
   (:require
+   [jsonista.core :as j]
    [muuntaja.core :as m]
    [reitit.coercion.malli :as rcm]
    [reitit.ring :as ring]
@@ -20,7 +21,8 @@
    [startrek.base.api.middleware.exceptions :as exceptions]
    [startrek.base.api.starship.routes :as starship-api])
   (:import
-   [org.eclipse.jetty.server Server]))
+   [org.eclipse.jetty.server Server]
+   [com.fasterxml.jackson.annotation JsonInclude$Include]))
 
 (set! *warn-on-reflection* true)
 
@@ -35,7 +37,11 @@
     favicon-api/routes]
    {:validate rs/validate
     :data {:coercion rcm/coercion
-           :muuntaja m/instance
+           :muuntaja (m/create
+                      (assoc-in m/default-options
+                                [:formats "application/json" :opts]
+                                {:mapper (-> (j/object-mapper {:decode-key-fn true})
+                                             (.setSerializationInclusion JsonInclude$Include/NON_EMPTY))})) ;; strip away empty stuff!
            :middleware [swagger/swagger-feature
                         muuntaja/format-middleware
                         (exceptions/exception-middleware)
