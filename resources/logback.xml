@@ -15,11 +15,26 @@
     </encoder>
   </appender>
 
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <encoder>
+      <pattern>[%d] --- [%-5level][%-25.25logger{25}] - %msg%n%rEx</pattern>
+    </encoder>
+    <file>/tmp/${CONTEXT_NAME}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <cleanHistoryOnStart>true</cleanHistoryOnStart>
+      <fileNamePattern>/tmp/${CONTEXT_NAME}.log-%d{yyyy-MM-dd}.%i.gz}</fileNamePattern>
+      <maxFileSize>10MB</maxFileSize>
+      <maxHistory>7</maxHistory>
+      <totalSizeCap>0</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
   <logger name="startrek" level="${STARTREK_LOG_LEVEL}"/>
   <logger name="com.zaxxer.hikari" level="${HIKARI_LOG_LEVEL}"/>
 
   <root level="${ROOT_LOG_LEVEL}">
     <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
   </root>
 
 </configuration>
