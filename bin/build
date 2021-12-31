@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-clojure -X:uberjar
-chmod +r app.jar
-docker build -f scripts/docker/Dockerfile -t startrek .
-rm -f pom.xml
+set -eo pipefail
+
+clojure -T:build uberjar

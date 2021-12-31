@@ -1,26 +1,29 @@
 {:paths ["src" "resources"]
 
- :deps {aero/aero {:mvn/version "1.1.6"}
+ :deps {org.clojure/clojure {:mvn/version "1.10.3"}
+        ;;
+        ;;
+        ;;
+        aero/aero {:mvn/version "1.1.6"}
         camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.2"}
-        ch.qos.logback/logback-classic {:mvn/version "1.2.4"}
+        ch.qos.logback/logback-classic {:mvn/version "1.2.10"}
         cheshire/cheshire {:mvn/version "5.10.1"}
-        clj-commons/iapetos {:mvn/version "0.1.11"}
+        clj-commons/iapetos {:mvn/version "0.1.12"}
         clj-http/clj-http {:mvn/version "3.12.3"}
-        com.github.seancorfield/honeysql {:mvn/version "2.0.0-rc5"}
-        com.github.seancorfield/next.jdbc {:mvn/version "1.2.674"}
+        com.github.seancorfield/honeysql {:mvn/version "2.2.840"}
+        com.github.seancorfield/next.jdbc {:mvn/version "1.2.761"}
         com.taoensso/tempura {:mvn/version "1.2.1"}
         com.zaxxer/HikariCP {:mvn/version "5.0.0"}
-        io.prometheus/simpleclient {:mvn/version "0.11.0"}
-        io.prometheus/simpleclient_hotspot {:mvn/version "0.11.0"}
-        juxt/clip {:mvn/version "0.23.0"}
+        io.prometheus/simpleclient {:mvn/version "0.14.1"}
+        io.prometheus/simpleclient_hotspot {:mvn/version "0.14.1"}
+        juxt/clip {:mvn/version "0.27.0"}
         metosin/muuntaja {:mvn/version "0.6.8"}
-        metosin/reitit {:mvn/version "0.5.13" :exclusions [metosin/reitit-sieppari metosin/reitit-dev]}
-        org.clojure/clojure {:mvn/version "1.10.3"}
+        metosin/reitit {:mvn/version "0.5.15" :exclusions [metosin/reitit-sieppari metosin/reitit-dev]}
         org.clojure/tools.cli {:mvn/version "1.0.206"}
-        org.clojure/tools.logging {:mvn/version "1.1.0"}
-        org.flywaydb/flyway-core {:mvn/version "7.11.4"}
+        org.clojure/tools.logging {:mvn/version "1.2.3"}
+        org.flywaydb/flyway-core {:mvn/version "8.3.0"}
         org.glassfish.external/opendmk_jmxremote_optional_jar {:mvn/version "1.0-b01-ea"}
-        org.postgresql/postgresql {:mvn/version "42.2.23"}
+        org.postgresql/postgresql {:mvn/version "42.3.1"}
         org.slf4j/jcl-over-slf4j {:mvn/version "1.7.32"}
         org.slf4j/jul-to-slf4j {:mvn/version "1.7.32"}
         org.slf4j/log4j-over-slf4j {:mvn/version "1.7.32"}
@@ -28,24 +31,22 @@
         ring-cors/ring-cors {:mvn/version "0.1.13"}
         ring/ring-jetty-adapter {:mvn/version "1.9.4"}}
 
- :aliases {:test {:extra-paths ["test" "test/resources"]
-                  :extra-deps  {expectations/clojure-test {:mvn/version "1.2.1"}
-                                com.github.tomakehurst/wiremock-jre8 {:mvn/version "2.29.1"}
-                                kelveden/clj-wiremock {:mvn/version "1.7.0"
-                                                       :exclusions [org.eclipse.jetty/jetty-servlet
-                                                                    org.eclipse.jetty/jetty-servlets
-                                                                    org.eclipse.jetty/jetty-webapp]}
-                                lambdaisland/kaocha {:mvn/version "1.0.861"}
-                                lambdaisland/kaocha-cloverage {:mvn/version "1.0.75"}
-                                lambdaisland/kaocha-junit-xml {:mvn/version "0.0.76"}}}
+ :aliases {:build {:deps {io.github.seancorfield/build-clj {:git/tag "v0.6.5"
+                                                            :git/sha "972031a"}}
+                   :ns-default scripts.build}
 
-           :uberjar {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.1.267"}}
-                     :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
-                     :exec-fn hf.depstar/uberjar
-                     :exec-args {:jar app.jar
-                                 :group-id star.trek
-                                 :artifact-id api
-                                 :version "0.0.0"
-                                 :main-class startrek.main
-                                 :aot true
-                                 :sync-pom true}}}}
+           :test {:extra-paths ["test"]
+                  :extra-deps {cheshire/cheshire {:mvn/version "5.10.1"}
+                               expectations/clojure-test {:mvn/version "1.2.1"}
+                               lambdaisland/kaocha {:mvn/version "1.60.972"}
+                               lambdaisland/kaocha-cloverage {:mvn/version "1.0.75"}
+                               lambdaisland/kaocha-junit-xml {:mvn/version "0.0.76"}
+                               orchestra/orchestra {:mvn/version "2021.01.01-1"}
+                               org.clojure/test.check {:mvn/version "1.1.1"}}}
+
+           :antq {:replace-deps {org.slf4j/slf4j-nop {:mvn/version "1.7.32"}
+                                 com.github.liquidz/antq {:mvn/version "1.3.1"}}
+                  :main-opts ["-m" "antq.core"
+                              "--skip" "pom"
+                              "--upgrade"
+                              "--force"]}}}

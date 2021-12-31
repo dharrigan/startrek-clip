@@ -1,5 +1,5 @@
-(ns startrek.base.api.starship.mapper
-  {:author ["David Harrigan"]})
+(ns startrek.api.starship.mapper
+  {:author "David Harrigan"})
 
 (set! *warn-on-reflection* true)
 

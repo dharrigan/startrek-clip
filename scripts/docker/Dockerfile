@@ -1,9 +1,7 @@
 #
 # Clojure Application Dockerfile
 #
-ARG JVM_TAG=openjdk-16-tools-deps-slim-buster
-#
-FROM clojure:${JVM_TAG}
+FROM --platform=linux/amd64 openjdk:17-slim-bullseye
 
 #
 # Add in curl as it is necessary to perform the healthcheck below
@@ -12,33 +10,47 @@ FROM clojure:${JVM_TAG}
 # in determining if the container can ping/access a remote port.
 #
 RUN apt-get update \
-    && apt-get install curl wget dnsutils telnet iputils-ping netcat less -y \
+    && apt-get install -qq -y \
+        curl \
+        dnsutils \
+        iputils-ping \
+        less \
+        netcat \
+        procps \
+        telnet \
+        unzip \
+        vim-tiny \
+        wget \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-#
+# Add in AWS CLI v2 as useful to have for launch scripts (e.g., copying down configuration files from S3)
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip -qq awscliv2.zip \
+    && ./aws/install \
+    && rm -rf aws awscliv2.zip
+
 # Add in the Prometheus JMX Exporter for remote monitoring/diagnostics
+ARG JMX_EXPORTER_VERSION=0.16.1
 #
-ARG JMX_EXPORTER_VERSION=0.15.0
-#
-RUN wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$JMX_EXPORTER_VERSION/jmx_prometheus_javaagent-$JMX_EXPORTER_VERSION.jar -O /tmp/jmx_prometheus_javaagent.jar
+RUN wget --quiet https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/$JMX_EXPORTER_VERSION/jmx_prometheus_javaagent-$JMX_EXPORTER_VERSION.jar -O /tmp/jmx_prometheus_javaagent.jar
 
 # HTTP
-EXPOSE 9053
+EXPOSE 8080
+
+# JMXMP (see src/**/jmx.clj)
+EXPOSE 5555
+
+# JMX (not JMXMP! - that is started by the server - see src/**/jmx.clj)
+EXPOSE 9010
 
 # JMX EXPORTER
 EXPOSE 9080
 
-# JMX
-EXPOSE 9010
-
-# Call health status against the health endpoint
-HEALTHCHECK --start-period=240s CMD curl -sS --fail http://localhost:9053/ping || exit 1
-
 # Options that are passed to the JVM when it is launched
 ENV JVM_OPTS ""
 
-# JMX port
+# JMX port (not JMXMP! - that is started by the server - see src/**/jmx.clj)
 ENV JMX_PORT 9010
 
 # JMX EXPORTER port
@@ -47,7 +59,19 @@ ENV JMX_EXPORTER_PORT 9080
 # Options that are passed to the APP when it is launched
 ENV RUN_OPTS ""
 
-# JAR name (as named during the uberjar task)
+# ENVIRONMENT (can be overridden during the container build)
+ARG ENVIRONMENT="local"
+
+# Export the Environment so that the launch script can pick it up
+ENV ENVIRONMENT $ENVIRONMENT
+
+# Application name (must be overridden during the container build)
+ARG APPLICATION
+
+# Export the Project name so that the launch script can pick it up
+ENV APPLICATION=$APPLICATION
+
+# JAR name (as named during the uberjar task - can be overridden during the container build)
 ARG APPLICATION_JAR="app.jar"
 
 # Export the name so that the launch script can pick it up
@@ -58,20 +82,25 @@ ENV APPLICATION_JAR $APPLICATION_JAR
 # break out of the container, they would escape as the user "clojure" and thus on
 # the host, they would have to perform *another* exploit to gain access as
 # root.
-RUN groupadd -r clojure && useradd --no-log-init -rg clojure clojure
+RUN groupadd -r clojure && useradd -m --no-log-init -rg clojure clojure
 
-#
+# Change to the user's home directory
+WORKDIR /home/clojure
+
 # From this point onwards, become the clojure user for (mostly) all operations.
 USER clojure
 
 # Copy the launch script into place
 COPY --chown=clojure:clojure scripts/docker/launch.sh launch.sh
 
-# Copy the Uberjar into place
-COPY --chown=clojure:clojure $APPLICATION_JAR $APPLICATION_JAR
-
 # Copy the Prometheus JMX Exporter config into place
-COPY --chown=clojure:clojure scripts/docker/jmxexporter/config.yml config.yml
+COPY --chown=clojure:clojure scripts/docker/jmxexporter/config.yml jmx-exporter-config.yml
+
+# Copy the jstatd permissions policy into place
+COPY --chown=clojure:clojure scripts/docker/jstatd.policy jstatd.policy
+
+# Copy the Uberjar into place
+COPY --chown=clojure:clojure target/$APPLICATION_JAR $APPLICATION_JAR
 
 # And awaayyy we go!
-ENTRYPOINT ["sh", "./launch.sh"]
+CMD ["sh", "./launch.sh"]

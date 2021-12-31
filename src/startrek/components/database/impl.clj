@@ -1,5 +1,5 @@
 (ns startrek.components.database.impl
-  {:author ["David Harrigan"]}
+  {:author "David Harrigan"}
   (:require
    [clojure.tools.logging :as log]
    [honey.sql :as sql]
@@ -51,9 +51,9 @@
       (throw e)))))
 
 (defn health-check
-  [{:keys [startrek-db] :as app-config}]
+  [{:keys [db] :as app-config}]
   (when-let [results (select (-> (helpers/select 1)
-                                 sql/format) startrek-db)]
+                                 sql/format) db)]
     results))
 
 ;; CLIP Lifecycle Functions

@@ -1,5 +1,5 @@
 (ns startrek.components.database.interface
-  {:author ["David Harrigan"]}
+  {:author "David Harrigan"}
   (:require
    [startrek.components.database.impl :as db]))
 

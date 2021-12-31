@@ -1,5 +1,5 @@
-(ns startrek.base.api.general.health
-  {:author ["David Harrigan"]})
+(ns startrek.api.general.health
+  {:author "David Harrigan"})
 
 (set! *warn-on-reflection* true)
 

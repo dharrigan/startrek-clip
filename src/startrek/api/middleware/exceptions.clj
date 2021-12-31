@@ -1,10 +1,10 @@
-(ns startrek.base.api.middleware.exceptions
-  {:author ["David Harrigan"]}
+(ns startrek.api.middleware.exceptions
+  {:author "David Harrigan"}
   (:require
    [clojure.string :refer [split]]
    [clojure.tools.logging :as log]
    [reitit.ring.middleware.exception :as exception]
-   [startrek.base.api.middleware.i18n :as i18n]
+   [startrek.api.middleware.i18n :as i18n]
    [taoensso.tempura :as tempura])
   (:import
    [java.util UUID]))

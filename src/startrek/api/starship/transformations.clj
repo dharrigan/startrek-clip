@@ -1,4 +1,4 @@
-(ns startrek.base.api.starship.transformations
+(ns startrek.api.starship.transformations
   {:author "David Harrigan"}
   (:require
    [clojure.set :as s]))

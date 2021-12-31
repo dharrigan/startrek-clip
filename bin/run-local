@@ -1,5 +1,26 @@
 #!/usr/bin/env bash
 
-# Don't forget to rename "config/config-example.edn" to "config/config-local.edn" and change the values to suit your setup.
+set -eo pipefail
+
+if [ ! -f "$PWD/resources/config/config-local.edn" ]; then
+    echo "Missing 'resources/config/config-local.edn'."
+    read -p "Would you like to copy 'config-example.edn' to 'config-local.edn' [Yy]? " -n1 -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo
+        echo "Okay, aborting run."
+        exit 1
+    else
+        echo
+        echo "Okay, copying file..."
+        cp "$PWD/resources/config/config-example.edn" "$PWD/resources/config/config-local.edn"
+    fi
+fi
+
 bin/build
-java -cp resources/config:app.jar startrek.main --config config-local.edn
+
+#
+# Don't forget to rename "config/config-example.edn" to "config/config-local.edn"
+# (or config/config-staging.edn or config/config-production.edn) and then change the values
+# to suit your setup!
+#
+java -cp resources/config:target/app.jar startrek.main --config config-local.edn $@

@@ -1,5 +1,5 @@
-(ns startrek.base.api.general.swagger
-  {:author ["David Harrigan"]}
+(ns startrek.api.general.swagger
+  {:author "David Harrigan"}
   (:require
    [reitit.swagger :as swagger]))
 

@@ -1,5 +1,5 @@
-(ns startrek.base.api.general.favicon
-  {:author ["David Harrigan"]})
+(ns startrek.api.general.favicon
+  {:author "David Harrigan"})
 
 (set! *warn-on-reflection* true)
 

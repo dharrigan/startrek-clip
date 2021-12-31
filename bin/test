@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-clj -M:test -m kaocha.runner "$@"
+set -eo pipefail
+
+clojure -M:test -m kaocha.runner "$@"

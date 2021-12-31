@@ -1,5 +1,5 @@
 (ns startrek.main
-  {:author ["David Harrigan"]}
+  {:author "David Harrigan"}
   (:require
    [aero.core :refer [read-config]]
    [clojure.java.io :as io]
@@ -21,20 +21,28 @@
     :default :default
     :parse-fn #(keyword %)]])
 
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var :unused-binding]}
+(defn ^:private process
+  [arguments system-config {:keys [app-config] :as system}]
+  ;; process arguments here...
+  (clip/stop system-config system)
+  (shutdown-agents))
+
 (defn -main
   [& args]
-  (let [{{:keys [config profile]} :options} (parse-opts args cli-options)
+  (let [{{:keys [config profile]} :options :keys [arguments]} (parse-opts args cli-options)
         system-config (load-config {:config config :profile profile})
         system (clip/start system-config)]
     (.addShutdownHook
      (Runtime/getRuntime)
-     (new Thread #(clip/stop system-config system))))
-  ;; do additional work here if required!
-  @(promise))
+     (new Thread #(clip/stop system-config system)))
+    (if (seq arguments)
+      (process arguments system-config system) ;; application run from the command line with arguments.
+      @(promise)))) ;; application run from the command line, no arguments, keep webserver running.
 
 (comment
 
- ;; paste into the repl
+ ;; paste (or eval) into the repl
 
  (do
   (require
@@ -48,7 +56,8 @@
   (def app-config (:app-config system))
   (intern (find-ns 'startrek.main) 'app-config app-config)) ; shove the value of app-config into this namespace
 
- (stop)
- (start)
+ (do
+  (stop)
+  (start))
 
- #_+)
+ ,)

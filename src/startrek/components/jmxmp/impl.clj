@@ -1,5 +1,5 @@
 (ns startrek.components.jmxmp.impl
-  {:author ["David Harrigan"]}
+  {:author "David Harrigan"}
   (:import
    [java.lang.management ManagementFactory]
    [javax.management.remote JMXConnectorServer JMXConnectorServerFactory JMXServiceURL]))
@@ -10,10 +10,11 @@
 
 (defn start
   "Start a JMX server on the specified `port`."
-  [port]
+  ^JMXConnectorServer
+  [{:keys [port] :as config}]
   (doto
     (JMXConnectorServerFactory/newJMXConnectorServer
-     (JMXServiceURL. "jmxmp" "0.0.0.0" port) nil (ManagementFactory/getPlatformMBeanServer))
+     (JMXServiceURL. "jmxmp" "0.0.0.0" (or port 0)) nil (ManagementFactory/getPlatformMBeanServer))
     (.start)))
 
 (defn stop

@@ -1,9 +1,9 @@
-(ns startrek.base.api.starship.routes
-  {:author ["David Harrigan"]}
+(ns startrek.api.starship.routes
+  {:author "David Harrigan"}
   (:require
-   [startrek.base.api.starship.mapper :as mapper]
-   [startrek.base.api.starship.specs :as specs]
-   [startrek.base.api.starship.transformations :as transformations]
+   [startrek.api.starship.mapper :as mapper]
+   [startrek.api.starship.specs :as specs]
+   [startrek.api.starship.transformations :as transformations]
    [startrek.components.starship.interface :as starship]))
 
 (set! *warn-on-reflection* true)

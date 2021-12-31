@@ -1,5 +1,5 @@
-(ns startrek.base.api.middleware.i18n
-  {:author ["David Harrigan"]})
+(ns startrek.api.middleware.i18n
+  {:author "David Harrigan"})
 
 (set! *warn-on-reflection* true)
 

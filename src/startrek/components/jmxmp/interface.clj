@@ -1,5 +1,5 @@
 (ns startrek.components.jmxmp.interface
-  {:author ["David Harrigan"]})
+  {:author "David Harrigan"})
 
 (set! *warn-on-reflection* true)
 

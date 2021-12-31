@@ -1,5 +1,5 @@
-(ns startrek.base.api.router
-  {:author ["David Harrigan"]}
+(ns startrek.api.router
+  {:author "David Harrigan"}
   (:require
    [jsonista.core :as j]
    [muuntaja.core :as m]
@@ -13,18 +13,23 @@
    [reitit.swagger-ui :as swagger-ui]
    [ring.adapter.jetty :as jetty]
    [ring.middleware.cors :refer [wrap-cors]]
-   [startrek.base.api.general.actuator :as actuator-api]
-   [startrek.base.api.general.favicon :as favicon-api]
-   [startrek.base.api.general.health :as health-api]
-   [startrek.base.api.general.metrics :as metrics]
-   [startrek.base.api.general.swagger :as swagger-api]
-   [startrek.base.api.middleware.exceptions :as exceptions]
-   [startrek.base.api.starship.routes :as starship-api])
+   [startrek.api.general.actuator :as actuator-api]
+   [startrek.api.general.favicon :as favicon-api]
+   [startrek.api.general.health :as health-api]
+   [startrek.api.general.metrics :as metrics]
+   [startrek.api.general.swagger :as swagger-api]
+   [startrek.api.middleware.exceptions :as exceptions]
+   [startrek.api.starship.routes :as starship-api])
   (:import
    [org.eclipse.jetty.server Server]
    [com.fasterxml.jackson.annotation JsonInclude$Include]))
 
 (set! *warn-on-reflection* true)
+
+(def ^:private cors-middleware
+  [wrap-cors
+   :access-control-allow-origin [#".*"]
+   :access-control-allow-methods [:delete :get :patch :post]])
 
 (defn ^:private router
   [app-config]
@@ -42,11 +47,10 @@
                                 [:formats "application/json" :opts]
                                 {:mapper (-> (j/object-mapper {:decode-key-fn true})
                                              (.setSerializationInclusion JsonInclude$Include/NON_EMPTY))})) ;; strip away empty stuff!
-           :middleware [swagger/swagger-feature
+           :middleware [cors-middleware
+                        swagger/swagger-feature
                         muuntaja/format-middleware
                         (exceptions/exception-middleware)
-                        [wrap-cors :access-control-allow-origin [#".*"]
-                                   :access-control-allow-methods [:get :put :post :patch :delete]]
                         parameters/parameters-middleware
                         coercion/coerce-exceptions-middleware
                         coercion/coerce-request-middleware
@@ -54,8 +58,9 @@
 
 ;; CLIP Lifecycle Functions
 
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn start
-  [app-config opts]
+  [{:keys [runtime-config] :as app-config}]
   (jetty/run-jetty
    (ring/ring-handler (router app-config)
                       (ring/routes
@@ -65,11 +70,12 @@
                          :docExpansion "full"
                          :validatorUrl nil})
                        (ring/create-default-handler)))
-   (assoc opts
-          :send-server-version? false
-          :send-date-header? false
-          :join? false))) ;; false so that we can stop it at the repl!
+   (merge (:jetty runtime-config) {:allow-null-path-info true
+                                   :send-server-version? false
+                                   :send-date-header? false
+                                   :join? false}))) ;; false so that we can stop it at the repl!
 
+#_{:clj-kondo/ignore [:clojure-lsp/unused-public-var]}
 (defn stop
   [^Server server]
   (.stop server) ; stop is async

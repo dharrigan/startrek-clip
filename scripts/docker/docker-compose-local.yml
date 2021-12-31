@@ -6,7 +6,7 @@ services:
   startrek:
     image: startrek:latest
     ports:
-      - "9053:9053"    # HTTP
+      - "9503:9503"    # HTTP
       - "18181:9080"   # Prometheus JMX Exporter
       - "15555:5555"   # JMXMP
     environment:

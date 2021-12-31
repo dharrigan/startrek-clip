@@ -1,5 +1,5 @@
 (ns startrek.components.starship.impl
-  {:author ["David Harrigan"]}
+  {:author "David Harrigan"}
   (:require
    [clojure.tools.logging :as log]
    [honey.sql :as sql]
@@ -16,11 +16,11 @@
                :where [:= :uuid id]}))
 
 (defn find-by-id
-  [query {:keys [startrek-db] :as app-config}]
+  [query {:keys [db] :as app-config}]
   (let [{:keys [id]} query]
     (log/infof "Finding Starship using query '%s'." query)
     (when-let [result (-> (find-by-id-sql id)
-                          (db/select startrek-db))]
+                          (db/select db))]
       (log/infof "Found Starship '%s' using query '%s'." (:starship/uuid result) query)
       result)))
 
@@ -40,10 +40,10 @@
         sql/format)))
 
 (defn search
-  [query {:keys [startrek-db] :as app-config}]
+  [query {:keys [db] :as app-config}]
   (log/infof "Finding starships using query '%s'." query)
   (when-let [results (seq (-> (search-sql query)
-                              (db/select-many startrek-db)))]
+                              (db/select-many db)))]
     (log/infof "Found '%d' starships(s) using query '%s'." (count results) query)
     results))
 
@@ -55,13 +55,13 @@
       sql/format))
 
 (defn create
-  [starship {:keys [startrek-db] :as app-config}]
+  [starship {:keys [db] :as app-config}]
   (if-let [{:starship/keys [uuid]} (first (search starship app-config))]
     (throw (ex-info "Starship already exists!." {:cause {:id uuid} :status :409 :error :resource.starship.exists}))
     (do
      (log/infof "Saving Starship '%s'." starship)
      (let [{:starship/keys [uuid]} (-> (create-sql starship)
-                                       (db/execute startrek-db {:return-keys true}))]
+                                       (db/execute db {:return-keys true}))]
        (when uuid
          (log/infof "Starship '%s' saved to PostgreSQL. FTW!" starship)
          uuid)))))
@@ -73,11 +73,11 @@
       sql/format))
 
 (defn delete
-  [query {:keys [startrek-db] :as app-config}]
+  [query {:keys [db] :as app-config}]
   (log/infof "Deleting Starship '%s'." query)
   (let [{:keys [id]} query
         {:next.jdbc/keys [update-count]} (-> (delete-sql id)
-                                             (db/execute startrek-db))]
+                                             (db/execute db))]
     (when (and update-count (pos? update-count))
       (log/infof "Deleted Starship '%s'." query)
       id)))
@@ -96,12 +96,12 @@
         sql/format)))
 
 (defn modify
-  [query {:keys [startrek-db] :as app-config}]
+  [query {:keys [db] :as app-config}]
   (let [{:keys [id]} query]
     (when-let [modified-starship (some-> (find-by-id-sql id)
-                                         (db/select startrek-db {:builder-fn rs/as-unqualified-lower-maps}) ;; makes it easier to merge if namespaces are removed
+                                         (db/select db {:builder-fn rs/as-unqualified-lower-maps}) ;; makes it easier to merge if namespaces are removed
                                          (merge query)
                                          (modify-sql)
-                                         (db/execute startrek-db {:return-keys true}))]
+                                         (db/execute db {:return-keys true}))]
       (log/infof "Modified Starship '%s' to '%s'." id modified-starship)
       modified-starship)))

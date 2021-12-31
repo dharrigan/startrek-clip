@@ -1,5 +1,5 @@
 (ns startrek.components.starship.interface
-  {:author ["David Harrigan"]}
+  {:author "David Harrigan"}
   (:require
    [startrek.components.starship.impl :as starship]))
 

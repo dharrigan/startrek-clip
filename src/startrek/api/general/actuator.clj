@@ -1,7 +1,7 @@
-(ns startrek.base.api.general.actuator
-  {:author ["David Harrigan"]}
+(ns startrek.api.general.actuator
+  {:author "David Harrigan"}
   (:require
-   [startrek.base.api.general.metrics :as metrics]
+   [startrek.api.general.metrics :as metrics]
    [startrek.components.database.interface :as db]))
 
 (set! *warn-on-reflection* true)

@@ -1,5 +1,5 @@
-(ns startrek.base.api.general.metrics
-  {:author ["David Harrigan"]}
+(ns startrek.api.general.metrics
+  {:author "David Harrigan"}
   (:require
    [iapetos.collector.jvm :as jvm]
    [iapetos.collector.ring :as ring]

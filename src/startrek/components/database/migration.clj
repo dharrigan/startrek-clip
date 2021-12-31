@@ -1,5 +1,5 @@
 (ns startrek.components.database.migration
-  {:author ["David Harrigan"]}
+  {:author "David Harrigan"}
   (:import
    [org.flywaydb.core Flyway]
    [org.flywaydb.core.api.configuration FluentConfiguration]))
