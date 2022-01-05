@@ -20,8 +20,8 @@
         metosin/muuntaja {:mvn/version "0.6.8"}
         metosin/reitit {:mvn/version "0.5.15" :exclusions [metosin/reitit-sieppari metosin/reitit-dev]}
         org.clojure/tools.cli {:mvn/version "1.0.206"}
-        org.clojure/tools.logging {:mvn/version "1.2.3"}
-        org.flywaydb/flyway-core {:mvn/version "8.3.0"}
+        org.clojure/tools.logging {:mvn/version "1.2.4"}
+        org.flywaydb/flyway-core {:mvn/version "8.4.0"}
         org.glassfish.external/opendmk_jmxremote_optional_jar {:mvn/version "1.0-b01-ea"}
         org.postgresql/postgresql {:mvn/version "42.3.1"}
         org.slf4j/jcl-over-slf4j {:mvn/version "1.7.32"}
@@ -31,14 +31,14 @@
         ring-cors/ring-cors {:mvn/version "0.1.13"}
         ring/ring-jetty-adapter {:mvn/version "1.9.4"}}
 
- :aliases {:build {:deps {io.github.seancorfield/build-clj {:git/tag "v0.6.5"
-                                                            :git/sha "972031a"}}
+ :aliases {:build {:deps {io.github.seancorfield/build-clj {:git/tag "v0.6.6"
+                                                            :git/sha "171d5f1"}}
                    :ns-default scripts.build}
 
            :test {:extra-paths ["test"]
                   :extra-deps {cheshire/cheshire {:mvn/version "5.10.1"}
                                expectations/clojure-test {:mvn/version "1.2.1"}
-                               lambdaisland/kaocha {:mvn/version "1.60.972"}
+                               lambdaisland/kaocha {:mvn/version "1.60.977"}
                                lambdaisland/kaocha-cloverage {:mvn/version "1.0.75"}
                                lambdaisland/kaocha-junit-xml {:mvn/version "0.0.76"}
                                orchestra/orchestra {:mvn/version "2021.01.01-1"}
