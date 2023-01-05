@@ -20,6 +20,18 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
+== Stop!
+
+I would recommend that attention is given to the
+https://github.com/dharrigan/startrek[startrek] project instead of this one.
+
+The `startrek` project uses Donut instead of Clip. It's also far more complete
+in handling errors, doing i18n, has tests showing how to mock ring requests
+and so on. Going forward, only the `startrek` project will be maintained.
+
+Saying that, if you do want to continue to refer to this one (but bring in
+ideas found in the `startrek` project) by all means enjoy!
+
 == Introduction
 
 This is a very small, yet surprisingly complete, example of using
